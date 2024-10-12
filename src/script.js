@@ -21,8 +21,25 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const matcapTexture = textureLoader.load("textures/matcaps/9.png");
-matcapTexture.colorSpace = THREE.SRGBColorSpace;
+const matcapTextures = [
+  textureLoader.load("textures/matcaps/1.png"),
+  textureLoader.load("textures/matcaps/2.png"),
+  textureLoader.load("textures/matcaps/3.png"),
+  textureLoader.load("textures/matcaps/4.png"),
+  textureLoader.load("textures/matcaps/5.png"),
+  textureLoader.load("textures/matcaps/6.png"),
+  textureLoader.load("textures/matcaps/7.png"),
+  textureLoader.load("textures/matcaps/8.png"),
+  textureLoader.load("textures/matcaps/9.png"),
+  textureLoader.load("textures/matcaps/10.png"),
+  textureLoader.load("textures/matcaps/11.png"),
+  textureLoader.load("textures/matcaps/12.png"),
+  textureLoader.load("textures/matcaps/13.png")
+];
+
+matcapTextures.forEach((texture) => {
+  texture.colorSpace = THREE.SRGBColorSpace;
+});
 
 /**
  * Fonts
@@ -35,7 +52,8 @@ const meshes = []; // Array to hold all the created meshes
 const geometryControls = {
   rotationSpeed: 0.0015,
   numberOfMeshes: 50,
-  distanceMultiplier: 40
+  distanceMultiplier: 40,
+  selectedTexture: 0 // Index of the selected texture
 };
 
 // Function to create meshes
@@ -55,8 +73,10 @@ const createMeshes = () => {
     }
   }
 
-  // Material
-  const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+  // Material using the selected texture
+  const material = new THREE.MeshMatcapMaterial({
+    matcap: matcapTextures[geometryControls.selectedTexture]
+  });
 
   // Create Donuts
   const donutGeometry = new THREE.TorusGeometry(0.5, 0.1, 12, 48);
@@ -152,11 +172,22 @@ const createMeshes = () => {
     scene.add(sphere);
     meshes.push(sphere); // Store the sphere mesh
   }
+
+  // Update text material to match selected texture
+  const textMaterial = new THREE.MeshMatcapMaterial({
+    matcap: matcapTextures[geometryControls.selectedTexture]
+  });
+  const textMesh = meshes.find((mesh) => mesh.geometry instanceof TextGeometry);
+  if (textMesh) {
+    textMesh.material = textMaterial; // Update text material
+  }
 };
 
 fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
   // Material for the text
-  const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+  const material = new THREE.MeshMatcapMaterial({
+    matcap: matcapTextures[geometryControls.selectedTexture]
+  }); // Default texture
 
   // Text
   const textGeometry = new TextGeometry("Hi! welcome to my portfolio", {
@@ -191,6 +222,28 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
     .add(geometryControls, "distanceMultiplier", 1, 100, 1)
     .name("Distance Multiplier")
     .onChange(createMeshes);
+
+  // Texture Selection
+  gui
+    .add(geometryControls, "selectedTexture", {
+      "Texture 1": 0,
+      "Texture 2": 1,
+      "Texture 3": 2,
+      "Texture 4": 3,
+      "Texture 5": 4,
+      "Texture 6": 5,
+      "Texture 7": 6,
+      "Texture 8": 7,
+      "Texture 9": 8,
+      "Texture 10": 9,
+      "Texture 11": 10,
+      "Texture 12": 11,
+      "Texture 13": 12
+    })
+    .name("Select Texture")
+    .onChange(() => {
+      createMeshes(); // Regenerate meshes with the selected texture
+    });
 });
 
 /**
