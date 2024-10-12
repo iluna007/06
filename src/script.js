@@ -17,10 +17,6 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
-// Axis helper
-/* const axesHelper = new THREE.AxesHelper();
-scene.add(axesHelper); */
-
 /**
  * Textures
  */
@@ -32,6 +28,8 @@ matcapTexture.colorSpace = THREE.SRGBColorSpace;
  * Fonts
  */
 const fontLoader = new FontLoader();
+
+const meshes = []; // Array to hold all the created meshes
 
 fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
   // Material
@@ -55,6 +53,7 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
 
   const text = new THREE.Mesh(textGeometry, material);
   scene.add(text);
+  meshes.push(text); // Store the text mesh
 
   // Donuts
   const donutGeometry = new THREE.TorusGeometry(0.5, 0.1, 12, 48);
@@ -70,62 +69,71 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
     donut.scale.set(scale, scale, scale);
 
     scene.add(donut);
+    meshes.push(donut); // Store the donut mesh
   }
+
   // Tetrahedron
   const tetrahedronGeometry = new THREE.TetrahedronGeometry(0.5);
   for (let i = 0; i < 50; i++) {
     const tetrahedron = new THREE.Mesh(tetrahedronGeometry, material);
-    tetrahedron.position.x = (Math.random() - 0.5) * 17;
-    tetrahedron.position.y = (Math.random() - 0.5) * 17;
-    tetrahedron.position.z = (Math.random() - 0.5) * 17;
+    tetrahedron.position.x = (Math.random() - 0.5) * 40;
+    tetrahedron.position.y = (Math.random() - 0.5) * 40;
+    tetrahedron.position.z = (Math.random() - 0.5) * 40;
     tetrahedron.rotation.x = Math.random() * Math.PI;
     tetrahedron.rotation.y = Math.random() * Math.PI;
     const scale = Math.random();
     tetrahedron.scale.set(scale, scale, scale);
 
     scene.add(tetrahedron);
+    meshes.push(tetrahedron); // Store the tetrahedron mesh
   }
+
   // Icosahedron
   const icosahedronGeometry = new THREE.IcosahedronGeometry(0.5);
   for (let i = 0; i < 50; i++) {
     const icosahedron = new THREE.Mesh(icosahedronGeometry, material);
-    icosahedron.position.x = (Math.random() - 0.5) * 15;
-    icosahedron.position.y = (Math.random() - 0.5) * 15;
-    icosahedron.position.z = (Math.random() - 0.5) * 15;
+    icosahedron.position.x = (Math.random() - 0.5) * 40;
+    icosahedron.position.y = (Math.random() - 0.5) * 40;
+    icosahedron.position.z = (Math.random() - 0.5) * 40;
     icosahedron.rotation.x = Math.random() * Math.PI;
     icosahedron.rotation.y = Math.random() * Math.PI;
     const scale = Math.random();
     icosahedron.scale.set(scale, scale, scale);
 
     scene.add(icosahedron);
+    meshes.push(icosahedron); // Store the icosahedron mesh
   }
+
   // Octahedron
   const octahedronGeometry = new THREE.OctahedronGeometry(0.025);
   for (let i = 0; i < 50; i++) {
     const octahedron = new THREE.Mesh(octahedronGeometry, material);
-    octahedron.position.x = (Math.random() - 0.5) * 13;
-    octahedron.position.y = (Math.random() - 0.5) * 13;
-    octahedron.position.z = (Math.random() - 0.5) * 13;
+    octahedron.position.x = (Math.random() - 0.5) * 50;
+    octahedron.position.y = (Math.random() - 0.5) * 50;
+    octahedron.position.z = (Math.random() - 0.5) * 50;
     octahedron.rotation.x = Math.random() * Math.PI;
     octahedron.rotation.y = Math.random() * Math.PI;
     const scale = Math.random();
     octahedron.scale.set(scale, scale, scale);
 
     scene.add(octahedron);
+    meshes.push(octahedron); // Store the octahedron mesh
   }
-  // Spehere
+
+  // Sphere
   const sphereGeometry = new THREE.SphereGeometry(0.1, 32, 32);
   for (let i = 0; i < 50; i++) {
     const sphere = new THREE.Mesh(sphereGeometry, material);
-    sphere.position.x = (Math.random() - 0.5) * 10;
-    sphere.position.y = (Math.random() - 0.5) * 10;
-    sphere.position.z = (Math.random() - 0.5) * 10;
+    sphere.position.x = (Math.random() - 0.5) * 50;
+    sphere.position.y = (Math.random() - 0.5) * 50;
+    sphere.position.z = (Math.random() - 0.5) * 50;
     sphere.rotation.x = Math.random() * Math.PI;
     sphere.rotation.y = Math.random() * Math.PI;
     const scale = Math.random();
     sphere.scale.set(scale, scale, scale);
 
     scene.add(sphere);
+    meshes.push(sphere); // Store the sphere mesh
   }
 });
 
@@ -186,6 +194,22 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  // Update rotations only for specific meshes
+  meshes.forEach((mesh) => {
+    if (
+      mesh.geometry instanceof THREE.IcosahedronGeometry ||
+      mesh.geometry instanceof THREE.OctahedronGeometry ||
+      mesh.geometry instanceof THREE.TetrahedronGeometry ||
+      mesh.geometry instanceof THREE.TorusGeometry
+    ) {
+      const randomSpeedX = Math.random() * 0.0015; // Random speed for rotation on x-axis
+      const randomSpeedY = Math.random() * 0.0015; // Random speed for rotation on y-axis
+
+      mesh.rotation.x += randomSpeedX;
+      mesh.rotation.y += randomSpeedY;
+    }
+  });
 
   // Update controls
   controls.update();
