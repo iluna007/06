@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "prebuild": "chmod +x node_modules/.bin/vite",
     "dev": "vite",
     "build": "vite build",
     "deploy": "vercel --prod"
