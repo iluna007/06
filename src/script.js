@@ -53,7 +53,7 @@ const geometryControls = {
   rotationSpeed: 0.0015,
   numberOfMeshes: 50,
   distanceMultiplier: 40,
-  selectedTexture: 9 // Index of the selected texture
+  selectedTexture: 8 // Index of the selected texture
 };
 
 // Function to create meshes
